@@ -5,19 +5,22 @@ const users = [
         id: '1',
         name: 'Andre',
         email: 'Andre@email.com',
-        age: 32
+        age: 32,
+        posts: '001'
     },
     {
         id: '2',
         name: 'Mark',
         email: 'Mark@email.com',
-        age: 36
+        age: 36,
+        posts: '002'
     },
     {
         id: '3',
         name: 'Rich',
         email: 'Rich@email.com',
-        age: 34
+        age: 34,
+        posts: '003'
     },
 ]
 
@@ -25,20 +28,23 @@ const posts = [
     {
         id: '001',
         title: '1 Title',
-        body: 'Content...',
-        published: true
+        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
+        published: true,
+        author: '2'
     },
     {
         id: '002',
         title: '2 Title',
-        body: 'Content...',
-        published: false
+        body: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ',
+        published: false,
+        author: '2'
     },
     {
         id: '003',
         title: '3 Title',
-        body: 'Content...',
-        published: true
+        body: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. ',
+        published: true,
+        author: '3'
     },
 ]
 
@@ -56,6 +62,7 @@ const typeDefs = `
         name: String!
         email: String!
         age: Int
+        posts: [Post!]!
     }
 
     type Post {
@@ -63,6 +70,7 @@ const typeDefs = `
         title: String!
         body: String!
         published: Boolean!
+        author: User!
     }
 `
 
@@ -81,7 +89,9 @@ const resolvers = {
                 return posts
             }
             return posts.filter(post => {
-                return post.title.toLowerCase().includes(args.query.toLowerCase())
+                const titleMatch = post.title.toLowerCase().includes(args.query.toLowerCase())
+                const bodyMatch = post.body.toLowerCase().includes(args.query.toLowerCase())
+                return titleMatch || bodyMatch
             })
         },
         me() {
@@ -99,6 +109,20 @@ const resolvers = {
                 body: 'Text...',
                 published: true,
             }
+        }
+    },
+    User: {
+        posts(parent, args, ctx) {
+            return posts.filter(post => {
+                return post.author === parent.id
+            })
+        }
+    },
+    Post: {
+        author(parent, args, ctx) {
+            return users.find(user => {
+                return user.id === parent.author
+            })
         }
     }
 }
