@@ -28,21 +28,21 @@ const posts = [
     {
         id: '001',
         title: '1 Title',
-        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
+        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
         published: true,
         author: '2'
     },
     {
         id: '002',
         title: '2 Title',
-        body: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ',
+        body: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
         published: false,
         author: '2'
     },
     {
         id: '003',
         title: '3 Title',
-        body: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. ',
+        body: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
         published: true,
         author: '3'
     },
@@ -51,19 +51,23 @@ const posts = [
 const comments = [
     {
         id: '2201',
-        text: 'Lincididunt ut labore '
+        text: 'Lincididunt ut labore.',
+        author: '3'
     },
     {
         id: '2202',
-        text: 'Ut enex ea commodo consequat. '
+        text: 'Ut enex ea commodo consequat.',
+        author: '1'
     },
     {
         id: '2203',
-        text: 'Dufu giat nulla pariatur. '
+        text: 'Dufu giat nulla pariatur.',
+        author: '2'
     },
     {
-        id: '220',
-        text: 'Du et dolore magna aliqua. '
+        id: '2204',
+        text: 'Du et dolore magna aliqua.',
+        author: '3'
     }
 ]
 
@@ -82,6 +86,7 @@ const typeDefs = `
         email: String!
         age: Int
         posts: [Post!]!
+        comments: [Comment!]!
     }
 
     type Post {
@@ -95,6 +100,7 @@ const typeDefs = `
     type Comment {
         id: ID!
         text: String!
+        author: User!
     }
 `
 
@@ -138,10 +144,22 @@ const resolvers = {
             }
         }
     },
+    Comment: {
+        author(parent, args, ctx) {
+            return users.find(user => {
+                return user.id = parent.author
+            })
+        }
+    },
     User: {
         posts(parent, args, ctx) {
             return posts.filter(post => {
                 return post.author === parent.id
+            })
+        },
+        comments(parent, args) {
+            return comments.filter(comment => {
+                return comment.author === parent.id
             })
         }
     },
