@@ -1,4 +1,4 @@
-const users = [{
+let users = [{
     id: '1',
     name: 'Andrew',
     email: 'andrew@example.com',
@@ -13,7 +13,7 @@ const users = [{
     email: 'mike@example.com'
 }]
 
-const posts = [{
+let posts = [{
     id: '10',
     title: 'GraphQL 101',
     body: 'This is how to use GraphQL...',
@@ -33,7 +33,7 @@ const posts = [{
     author: '2'
 }]
 
-const comments = [{
+let comments = [{
     id: '102',
     text: 'This worked well for me. Thanks!',
     author: '3',
@@ -52,7 +52,7 @@ const comments = [{
     id: '105',
     text: 'Nevermind. I got it to work.',
     author: '1',
-    post: '11'
+    post: '12'
 }]
 
 export { users, posts, comments }
