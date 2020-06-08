@@ -48,11 +48,30 @@ const posts = [
     },
 ]
 
+const comments = [
+    {
+        id: '2201',
+        text: 'Lincididunt ut labore '
+    },
+    {
+        id: '2202',
+        text: 'Ut enex ea commodo consequat. '
+    },
+    {
+        id: '2203',
+        text: 'Dufu giat nulla pariatur. '
+    },
+    {
+        id: '220',
+        text: 'Du et dolore magna aliqua. '
+    }
+]
 
 const typeDefs = `
     type Query {
         users(query: String): [User!]!
         posts(query: String): [Post!]!
+        comments: [Comment!]!
         me: User!
         post: Post!
     }
@@ -71,6 +90,11 @@ const typeDefs = `
         body: String!
         published: Boolean!
         author: User!
+    }
+
+    type Comment {
+        id: ID!
+        text: String!
     }
 `
 
@@ -93,6 +117,9 @@ const resolvers = {
                 const bodyMatch = post.body.toLowerCase().includes(args.query.toLowerCase())
                 return titleMatch || bodyMatch
             })
+        },
+        comments(parent, args, ctx) {
+            return comments
         },
         me() {
             return {
