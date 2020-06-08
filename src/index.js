@@ -30,7 +30,7 @@ const posts = [
         title: '1 Title',
         body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
         published: true,
-        author: '2'
+        author: '1'
     },
     {
         id: '002',
@@ -52,22 +52,26 @@ const comments = [
     {
         id: '2201',
         text: 'Lincididunt ut labore.',
-        author: '3'
+        author: '3',
+        post: '001'
     },
     {
         id: '2202',
         text: 'Ut enex ea commodo consequat.',
-        author: '1'
+        author: '1',
+        post: '001'
     },
     {
         id: '2203',
         text: 'Dufu giat nulla pariatur.',
-        author: '2'
+        author: '2',
+        post: '002'
     },
     {
         id: '2204',
         text: 'Du et dolore magna aliqua.',
-        author: '3'
+        author: '3',
+        post: '003'
     }
 ]
 
@@ -95,12 +99,14 @@ const typeDefs = `
         body: String!
         published: Boolean!
         author: User!
+        comments: [Comment!]!
     }
 
     type Comment {
         id: ID!
         text: String!
         author: User!
+        post: Post!
     }
 `
 
@@ -110,17 +116,21 @@ const resolvers = {
             if (!args.query) {
                 return users
             }
-            return users.filter(user => {
-                return user.name.toLowerCase().includes(args.query.toLowerCase())
-            })
+            return users.filter(user => user.name
+                    .toLowerCase()
+                    .includes(args.query.toLowerCase()))
         },
         posts(parent, args, ctx) {
             if (!args.query) {
                 return posts
             }
             return posts.filter(post => {
-                const titleMatch = post.title.toLowerCase().includes(args.query.toLowerCase())
-                const bodyMatch = post.body.toLowerCase().includes(args.query.toLowerCase())
+                const titleMatch = post.title
+                    .toLowerCase()
+                    .includes(args.query.toLowerCase())
+                const bodyMatch = post.body
+                    .toLowerCase()
+                    .includes(args.query.toLowerCase())
                 return titleMatch || bodyMatch
             })
         },
@@ -140,36 +150,35 @@ const resolvers = {
                 id: '5739839',
                 title: 'Good Day',
                 body: 'Text...',
-                published: true,
+                published: true
             }
+        }
+    },
+      Post: {
+        author(parent, args, ctx) {
+            return users.find(user => user.id === parent.author)
+        },
+        comments(parent, args) {
+            return comments.filter(comment => comment.post === parent.id)
         }
     },
     Comment: {
         author(parent, args, ctx) {
-            return users.find(user => {
-                return user.id = parent.author
-            })
+            return users.find(user => user.id = parent.author)
+        },
+        post(parent, args) {
+            return posts.find(post => post.id === parent.post)
         }
     },
     User: {
         posts(parent, args, ctx) {
-            return posts.filter(post => {
-                return post.author === parent.id
-            })
+            return posts.filter(post => post.author === parent.id)
         },
         comments(parent, args) {
-            return comments.filter(comment => {
-                return comment.author === parent.id
-            })
+            return comments.filter(comment => comment.author === parent.id)
         }
     },
-    Post: {
-        author(parent, args, ctx) {
-            return users.find(user => {
-                return user.id === parent.author
-            })
-        }
-    }
+  
 }
 
 const server = new GraphQLServer({
