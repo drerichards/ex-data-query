@@ -71,9 +71,11 @@ const typeDefs = `
 
     type Mutation {
         createUser(data: CreateUserInput): User!
-        deleteUser(id: ID!): User!
         createPost(data: CreatePostInput): Post!
         createComment(data: CreateCommentInput): Comment!
+        deleteUser(id: ID!): User!
+        deletePost(id: ID!): Post!
+        deleteComment(id: ID!): Comment!
     }
 
     input CreateUserInput {
@@ -179,27 +181,6 @@ const resolvers = {
             users.push(user)
             return user
         },
-        deleteUser(parent, { id }, ctx, info) {
-            const userIndex = users.findIndex(user => user.id === id)
-
-            if (userIndex === -1) {
-                throw new Error('User not found')
-            }
-
-            const deletedUser = users.splice(userIndex, 1)
-
-            posts = posts.filter(post => {
-                const match = post.author === id
-
-                if (match) {
-                    comments = comments.filter(comment => comment.post !== post.id)
-                }
-                return !match
-            })
-
-            comments = comments.filter(comment => comment.author !== id)
-            return deletedUser[0]
-        },
         createPost(parent, { data }, ctx, info) {
             const userExists = users.some((user) => user.id === data.author)
 
@@ -230,7 +211,49 @@ const resolvers = {
 
             comments.push(comment)
             return comment
-        }
+        },
+        deleteUser(parent, { id }, ctx, info) {
+            const userIndex = users.findIndex(user => user.id === id)
+
+            if (userIndex === -1) {
+                throw new Error('User not found')
+            }
+
+            const deletedUser = users.splice(userIndex, 1)
+
+            posts = posts.filter(post => {
+                const match = post.author === id
+
+                if (match) {
+                    comments = comments.filter(comment => comment.post !== post.id)
+                }
+                return !match
+            })
+
+            comments = comments.filter(comment => comment.author !== id)
+            return deletedUser[0]
+        },
+        deletePost(parent, { id }, ctx, info) {
+            const postIndex = posts.findIndex(post => post.id === id)
+
+            if (postIndex === -1) {
+                throw new Error('Post not found')
+            }
+
+            const deletedPost = posts.splice(postIndex, 1)
+            comments = comments.filter(comment => comment.post !== id)
+            return deletedPost[0]
+        },
+        deleteComment(parent, { id }, ctx, info) {
+            const commentIndex = comments.findIndex(comment => comment.id === id)
+
+            if (commentIndex === -1) {
+                throw new Error('Comment not found')
+            }
+
+            const deletedComment = comments.splice(commentIndex, 1)
+            return deletedComment[0]
+        },
     },
     Post: {
         author(parent, args, ctx, info) {
